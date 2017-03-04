@@ -4,10 +4,14 @@ function Game:init()
   self.player = Player()
   love.graphics.setBackgroundColor(Color[5])
 
+  self.numBranches = 0
+  
   self.rails = EntitySystem()
-  self.rails:add(Rail())
+  self.player.rail = self.rails:add(Rail())
 
   self.timer = Timer.new()
+
+  self.camera = Camera(love.graphics.getWidth() - 32, love.graphics.getHeight() / 2)
 end
 
 function Game:update(dt)
@@ -18,8 +22,12 @@ function Game:update(dt)
 end
 
 function Game:draw()
+  self.camera:attach()
+
   self.rails:forEach('draw')
   self.player:draw()
+
+  self.camera:detach()
 end
 
 return Game

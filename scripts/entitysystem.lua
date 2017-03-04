@@ -7,14 +7,14 @@ local Entities = Class {
 
 --- Initialize a new Entities object
 function Entities:init()
-  self.pool = {}
+	self.pool = {}
 end
 
 --- Add a new entity to the system
 -- @return The object that was created and added
 function Entities:add(obj)
 	table.insert(self.pool, obj)
-  return obj
+	return obj
 end
 
 --- Remove an entity from the system
@@ -29,34 +29,34 @@ end
 
 -- Removes and returns item at top of table
 function Entities:pop()
-  local e = self.pool[#self.pool]
-  self.pool[#self.pool] = nil
-  return e
+	local e = self.pool[#self.pool]
+	self.pool[#self.pool] = nil
+	return e
 end
 
 -- Changes the places of the entities at position i and j
 function Entities:swap(i, j)
-  self.pool[i], self.pool[j] = self.pool[j], self.pool[i]
+	self.pool[i], self.pool[j] = self.pool[j], self.pool[i]
 end
 
 function Entities:getAll()
-  return self.pool
+	return self.pool
 end
 
 function Entities:size()
-  return #self.pool
+	return #self.pool
 end
 
 function Entities:removeAll()
 	-- local clone = Class.clone(self.pool)
 
-  local clone = {}
+	local clone = {}
 
-  for _, entity in pairs(self.pool) do
-    table.insert(clone, entity)
-  end
+	for _, entity in pairs(self.pool) do
+		table.insert(clone, entity)
+	end
 
-  self.pool = {}
+	self.pool = {}
 
 	return clone
 end
