@@ -1,5 +1,5 @@
 local Rail = Class {
-	speed = 100,
+	speed = 200,
 	length = 128
 }
 
@@ -10,6 +10,9 @@ function Rail:init(x, t)
 	self.y = 0
 
 	self.head = true
+
+	self.color = Color[1]
+	self.disabledColor = Color[4]
 
 	-- TODO branch right type
 	-- Either straight, branch, or deadend
@@ -38,14 +41,7 @@ function Rail:init(x, t)
 
 		self.points1 = self.curve1:render(5)
 		self.points2 = self.curve2:render(5)
-
-		self.bothCurves = self.points1
-		for k, v in pairs(self.points2) do
-			table.insert(self.bothCurves, v)
-		end
-		-- table.insert(self.bothCurves, self.points1[1])
-		-- table.insert(self.bothCurves, self.points1[2])
-
+		
 		self.willTakeCurve = false
 	elseif self.type == 'deadend' then
 
@@ -66,29 +62,53 @@ function Rail:update(dt)
 			-- Do nothing
 		end
 
-		-- TODO decide which rail to put player on for branches
-		Game.player.rail = self.nextRail
-
 		self.head = false
-	end 
+	end
+
+	if Game.player.rail == self and self.y >= Game.player.y + Rail.length then
+		if self.type == 'deadend' then
+			-- Game over. But this is handled in the player class
+		else
+			-- TODO decide which rail to put player on for branches
+			if self.type == 'branch' and self.willTakeCurve then
+				print('Taking curve')
+				Game.player:setRail(self.nextRailBranch)
+			else
+				Game.player:setRail(self.nextRail)
+			end
+		end
+	end
 
 	if self.y > love.graphics.getHeight() + Rail.length then
+		Game.isWarmingUp = false
 		Game.rails:remove(self)
 	end
 end
 
 function Rail:draw()
-	love.graphics.setColor(Color[3])
+	love.graphics.setColor(self.color)
 
 	-- TODO line thickness
 	love.graphics.push()
 	love.graphics.translate(0, self.y - Rail.length)
-	love.graphics.setColor(Color[3])
+	love.graphics.setColor(self.color)
 
 	if self.type == 'straight' then
 		love.graphics.rectangle('line', self.x, 0, self.w, self.h, 2)
 	elseif self.type == 'branch' then
+		if self.willTakeCurve then
+			love.graphics.setColor(self.disabledColor)
+		else
+			love.graphics.setColor(self.color)
+		end
+
 		love.graphics.rectangle('line', self.x, 0, self.w, self.h, 2)
+
+		if self.willTakeCurve then
+			love.graphics.setColor(self.color)
+		else
+			love.graphics.setColor(self.disabledColor)
+		end
 
 		love.graphics.line(self.points1)
 		love.graphics.line(self.points2)
@@ -101,21 +121,44 @@ function Rail:draw()
 end
 
 function Rail:getX()
-	return self.x
+	if self.willTakeCurve then
+		local t = math.min(math.abs((self.y - Game.player.y) / Rail.length), 1)
+		local x, y = self.curve2:evaluate(t)
+		return x
+	else
+		return self.x
+	end
+end
+
+function Rail:switch()
+	self.willTakeCurve = not self.willTakeCurve
 end
 
 function Rail:addNewRail(x)
+	if Game.isWarmingUp then
+		return Game.rails:add(Rail(x or self.x, 'straight'))
+	end
+
 	local newRail = nil
 
-	if love.math.random() > 0.925 then
+	local branchProbability = 0.2
+	local deadendProbability = 0.7
+
+	if love.math.random() < branchProbability and not Game:isRail(self.x + self.w * 2, self.y) and self.x + self.w * 2 < love.graphics.getWidth() then
 		-- TODO left and right branches. Make sure branch doesn't go off screen or overlap another track
 		Game.numBranches = Game.numBranches + 1
 		newRail = Game.rails:add(Rail(x or self.x, 'branch'))
 		-- TODO and canHaveDeadend
 		-- TODO this needs to be 'has2Paths'
-	elseif love.math.random() > 0.8 and Game.numBranches > 1 then
-		Game.numBranches = Game.numBranches - 1
-		newRail = Game.rails:add(Rail(x or self.x, 'deadend'))
+	elseif love.math.random() < deadendProbability then
+		local hasPath, pathHead = Game.player:hasPath()
+
+		if hasPath and pathHead ~= self then
+			Game.numBranches = Game.numBranches - 1
+			newRail = Game.rails:add(Rail(x or self.x, 'deadend'))
+		else
+			newRail = Game.rails:add(Rail(x or self.x, 'straight'))
+		end
 	else
 		newRail = Game.rails:add(Rail(x or self.x, 'straight'))
 	end
