@@ -1,12 +1,11 @@
 local Rail = Class {
-	speed = 200,
 	length = 128
 }
 
 function Rail:init(x, t)
 	self.w, self.h = 32, Rail.length
 
-	self.x = x or love.graphics.getWidth() / 2 - self.w / 2
+	self.x = x or 0
 	self.y = 0
 
 	self.head = true
@@ -49,15 +48,16 @@ function Rail:init(x, t)
 end
 
 function Rail:update(dt)
-	self.y = self.y + dt * Rail.speed
+	self.y = self.y + dt * Game.speed
 
 	if self.head and self.y > self.length then
 		-- TODO rail choice shouldn't be totally random, and make sure that there is always a path (not all deadends)
 		if self.type == 'straight' then
 			self.nextRail = self:addNewRail(self.x)
 		elseif self.type == 'branch' then
-			self.nextRail = self:addNewRail(self.x)
+			-- TODO when adding rails that branch left, the ordering is going to change. Add the branch first so that the check later will catch branches on the side.
 			self.nextRailBranch = self:addNewRail(self.x + self.w * 2)
+			self.nextRail = self:addNewRail(self.x)
 		elseif self.type == 'deadend' then
 			-- Do nothing
 		end
@@ -90,7 +90,7 @@ function Rail:draw()
 
 	-- TODO line thickness
 	love.graphics.push()
-	love.graphics.translate(0, self.y - Rail.length)
+	love.graphics.translate(-Game.player.w / 2, self.y - Rail.length)
 	love.graphics.setColor(self.color)
 
 	if self.type == 'straight' then
@@ -144,7 +144,9 @@ function Rail:addNewRail(x)
 	local branchProbability = 0.2
 	local deadendProbability = 0.7
 
-	if love.math.random() < branchProbability and not Game:isRail(self.x + self.w * 2, self.y) and self.x + self.w * 2 < love.graphics.getWidth() then
+	if love.math.random() < branchProbability
+			and not Game:isRail(self.x + self.w * 2, self.y)   -- Prevent branches from being built onto other rails
+			and self.type ~= 'branch' then                     -- Don't allow 2 branches in a row (Maybe add this in later after sorting out the bugs)
 		-- TODO left and right branches. Make sure branch doesn't go off screen or overlap another track
 		Game.numBranches = Game.numBranches + 1
 		newRail = Game.rails:add(Rail(x or self.x, 'branch'))

@@ -3,19 +3,32 @@ local Player = Class {}
 function Player:init()
 	self.w, self.h = 32, 48
 
-	self.x = love.graphics.getWidth() / 2 - self.w / 2
+	self.x = 0
 	self.y = (love.graphics.getHeight() * 3) / 4
+
+	self.lastPosX = self.x
+
+	self.r = 0
 end
 
 function Player:update(dt)
 	-- TODO only calculate if needing to take curve
+	self.lastPosX = self.x
 	self.x = self.rail:getX()
+
+	self.r = math.atan2(1, self.lastPosX - self.x) - math.pi / 2
 end
 
 function Player:draw()
+	love.graphics.push()
+	love.graphics.translate(self.x, self.y)
+	love.graphics.rotate(self.r)
+
 	love.graphics.setColor(Color[2])
-	love.graphics.rectangle('line', self.x, self.y, self.w, self.h, 2)
-	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h, 2)
+	love.graphics.rectangle('line', -self.w / 2, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('fill', -self.w / 2, -self.h / 2, self.w, self.h, 2)
+
+	love.graphics.pop()
 end
 
 function Player:setRail(rail)
@@ -24,7 +37,7 @@ function Player:setRail(rail)
 
 	if self.rail.type == 'deadend' then
 		-- Game Over!
-		error('Oh now!')
+		error('Game over! You ran into a dead end')
 	end
 end
 

@@ -1,8 +1,14 @@
 local Game = {}
 
 function Game:init()
+  self.timer = Timer.new()
+
   self.player = Player()
   love.graphics.setBackgroundColor(Color[5])
+
+  self.speed = 200
+  -- 1 minute of difficulty increase, whereafter difficulty remains the same. Could make it infinite, but it may get way too crazy fast
+  self.timer.tween(60, self, {speed = 1000}, 'linear')
 
   self.numBranches = 0
   
@@ -21,10 +27,7 @@ function Game:init()
 
   Game.player:setRail(closestRail)
 
-  self.timer = Timer.new()
-
-  self.camera = Camera(love.graphics.getWidth() - 32, love.graphics.getHeight() / 2)
-  -- self.camera:zoom(0.5)
+  self.camera = Camera(0, love.graphics.getHeight() / 2)
 end
 
 function Game:update(dt)
@@ -32,6 +35,8 @@ function Game:update(dt)
 
   self.rails:forEach('update', dt)
   self.player:update(dt)
+
+  self.camera:lockX(Game.player.x, Camera.smooth.damped(10))
 end
 
 function Game:draw()
