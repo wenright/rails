@@ -139,8 +139,8 @@ function Rail:addNewRail(x)
 		return Game.rails:add(Rail(x or self.x, 'straight'))
 	end
 
-	local newRail = nil
-
+	-- TODO rather than probabilities, do something like 'after random(1 -> 4) rails, spawn deadend'
+	-- TODO there is a possibility where it keeps branching right and not spawning any dead ends, causing there to be no branches on the players rail
 	local branchProbability = 0.2
 	local deadendProbability = 0.7
 
@@ -148,24 +148,17 @@ function Rail:addNewRail(x)
 			and not Game:isRail(self.x + self.w * 2, self.y)   -- Prevent branches from being built onto other rails
 			and self.type ~= 'branch' then                     -- Don't allow 2 branches in a row (Maybe add this in later after sorting out the bugs)
 		-- TODO left and right branches. Make sure branch doesn't go off screen or overlap another track
-		Game.numBranches = Game.numBranches + 1
-		newRail = Game.rails:add(Rail(x or self.x, 'branch'))
+		return Game.rails:add(Rail(x or self.x, 'branch'))
 		-- TODO and canHaveDeadend
-		-- TODO this needs to be 'has2Paths'
-	elseif love.math.random() < deadendProbability then
-		local hasPath, pathHead = Game.player:hasPath()
-
-		if hasPath and pathHead ~= self then
-			Game.numBranches = Game.numBranches - 1
-			newRail = Game.rails:add(Rail(x or self.x, 'deadend'))
-		else
-			newRail = Game.rails:add(Rail(x or self.x, 'straight'))
-		end
-	else
-		newRail = Game.rails:add(Rail(x or self.x, 'straight'))
 	end
 
-	return newRail
+	if love.math.random() < deadendProbability then
+		if Game.player:pathCount() > 1 then
+			return Game.rails:add(Rail(x or self.x, 'deadend'))
+		end
+	end
+
+	return Game.rails:add(Rail(x or self.x, 'straight'))
 end
 
 return Rail

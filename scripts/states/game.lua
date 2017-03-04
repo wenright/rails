@@ -10,8 +10,6 @@ function Game:init()
   -- 1 minute of difficulty increase, whereafter difficulty remains the same. Could make it infinite, but it may get way too crazy fast
   self.timer.tween(60, self, {speed = 1000}, 'linear')
 
-  self.numBranches = 0
-  
   self.rails = EntitySystem()
 
   self.rails:add(Rail())
@@ -31,12 +29,14 @@ function Game:init()
 end
 
 function Game:update(dt)
-  self.timer.update(dt)
+  if not self.paused then
+    self.timer.update(dt)
 
-  self.rails:forEach('update', dt)
-  self.player:update(dt)
+    self.rails:forEach('update', dt)
+    self.player:update(dt)
 
-  self.camera:lockX(Game.player.x, Camera.smooth.damped(10))
+    self.camera:lockX(Game.player.x, Camera.smooth.damped(10))
+  end
 end
 
 function Game:draw()
@@ -66,6 +66,16 @@ function Game:getClosestRail(x, y)
   end
 
   return nil
+end
+
+function Game:mousepressed(x, y, button, isTouch)
+  Game.player:switchRails()
+end
+
+function Game:keypressed(key)
+  if key == 'p' then
+    self.paused = not self.paused
+  end
 end
 
 return Game

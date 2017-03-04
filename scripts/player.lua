@@ -42,27 +42,28 @@ function Player:setRail(rail)
 end
 
 -- Recursively check if there is a route from the current rail to a head
-function Player:hasPath()
+function Player:pathCount()
 	assert(self.rail, 'Player is not currently on a rail')
 
-	local pathHead = nil
-
 	local function checkPath(rail)
-		if rail == nil then return false end
+		if rail == nil then return 0 end
 
 		if rail.head then
-			pathHead = rail
-			return rail.type ~= 'deadend'
+			if rail.type == 'deadend' then
+				return 0
+			else
+				return 1
+			end
 		end
 
 		if rail.type == 'branch' then
-			return checkPath(rail.nextRailBranch) or checkPath(rail.nextRail)
+			return checkPath(rail.nextRailBranch) + checkPath(rail.nextRail)
 		else
 			return checkPath(rail.nextRail)
 		end
 	end
 
-	return checkPath(self.rail), pathHead
+	return checkPath(self.rail)
 end
 
 function Player:switchRails()
@@ -86,10 +87,6 @@ function Player:switchRails()
 	else
 		print('No branch rails ahead')
 	end
-end
-
-function love.mousepressed(x, y, button, isTouch)
-	Game.player:switchRails()
 end
 
 return Player
