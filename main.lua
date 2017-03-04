@@ -5,6 +5,11 @@ Camera = require 'lib.hump.camera'
 
 EntitySystem = require 'scripts.entitysystem'
 
+Color = require 'scripts.color'
+
+Player = require 'scripts.player'
+Rail = require 'scripts.rail'
+
 Game = require 'scripts.states.game'
 Menu = require 'scripts.states.menu'
 
@@ -25,6 +30,7 @@ function love.update(dt)
   Timer.update(dt)
 
   if DEBUG then
+    -- TODO remove lovebird for releases
     require 'lib.lovebird.lovebird':update(dt)
   end
 end
