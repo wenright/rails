@@ -6,9 +6,9 @@ function Game:init()
   self.player = Player()
   love.graphics.setBackgroundColor(Color[5])
 
-  self.speed = 200
+  self.speed = 300
   -- 1 minute of difficulty increase, whereafter difficulty remains the same. Could make it infinite, but it may get way too crazy fast
-  self.timer.tween(60, self, {speed = 1000}, 'linear')
+  self.timer.tween(60, self, {speed = 1250}, 'linear')
 
   self.rails = EntitySystem()
 
@@ -26,6 +26,9 @@ function Game:init()
   Game.player:setRail(closestRail)
 
   self.camera = Camera(0, love.graphics.getHeight() / 2)
+
+  -- TODO camera zooming based on screen size
+  self.camera:zoom(love.graphics.getWidth() / 600)
 end
 
 function Game:update(dt)

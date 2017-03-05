@@ -40,7 +40,7 @@ function Rail:init(x, t)
 
 		self.points1 = self.curve1:render(5)
 		self.points2 = self.curve2:render(5)
-		
+
 		self.willTakeCurve = false
 	elseif self.type == 'deadend' then
 
@@ -141,8 +141,8 @@ function Rail:addNewRail(x)
 
 	-- TODO rather than probabilities, do something like 'after random(1 -> 4) rails, spawn deadend'
 	-- TODO there is a possibility where it keeps branching right and not spawning any dead ends, causing there to be no branches on the players rail
-	local branchProbability = 0.2
-	local deadendProbability = 0.7
+	local branchProbability = 0.4
+	local deadendProbability = 0.6
 
 	if love.math.random() < branchProbability
 			and not Game:isRail(self.x + self.w * 2, self.y)   -- Prevent branches from being built onto other rails

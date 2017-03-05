@@ -16,7 +16,7 @@ function Player:update(dt)
 	self.lastPosX = self.x
 	self.x = self.rail:getX()
 
-	self.r = math.atan2(1, self.lastPosX - self.x) - math.pi / 2
+	self.r = math.atan2(5, self.lastPosX - self.x) - math.pi / 2
 end
 
 function Player:draw()
