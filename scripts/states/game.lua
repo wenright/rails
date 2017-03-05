@@ -6,6 +6,8 @@ function Game:init()
   self.player = Player()
   love.graphics.setBackgroundColor(Color[5])
 
+  self.grit = love.graphics.newImage('grit/grit.png')
+
   self.speed = 300
   -- 1 minute of difficulty increase, whereafter difficulty remains the same. Could make it infinite, but it may get way too crazy fast
   self.timer.tween(60, self, {speed = 1250}, 'linear')
@@ -28,7 +30,13 @@ function Game:init()
   self.camera = Camera(0, love.graphics.getHeight() / 2)
 
   -- TODO camera zooming based on screen size
-  self.camera:zoom(love.graphics.getWidth() / 600)
+  -- self.camera:zoom(love.graphics.getWidth() / 600)
+  self.camera:zoom(1)
+
+  -- TODO load highscore from a save file
+  self.highscore = 0
+
+  self.score = 0
 end
 
 function Game:update(dt)
@@ -49,6 +57,16 @@ function Game:draw()
   self.player:draw()
 
   self.camera:detach()
+
+  love.graphics.setColor(Color[4])
+  local w, h = love.graphics.getDimensions()
+  local iw, ih = self.grit:getDimensions()
+  local sx, sy = w / iw, h / ih
+  love.graphics.draw(self.grit, 0, 0, 0, sx, sy)
+
+  love.graphics.setColor(Color[1])
+  love.graphics.print('HI ' .. self.highscore)
+  love.graphics.print('   ' ..  self.score, 0, 40)
 end
 
 function Game:isRail(x, y)

@@ -80,7 +80,7 @@ function Player:switchRails()
 		return findNextBranch(rail.nextRail)
 	end
 
-	local nextBranch = findNextBranch(self.rail.nextRail)
+	local nextBranch = findNextBranch(self.rail)
 
 	if nextBranch then
 		nextBranch:switch()
