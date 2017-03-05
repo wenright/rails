@@ -9,6 +9,7 @@ function Player:init()
 	self.lastPosX = self.x
 
 	self.r = 0
+	self.lastR = 0
 end
 
 function Player:update(dt)
@@ -16,7 +17,8 @@ function Player:update(dt)
 	self.lastPosX = self.x
 	self.x = self.rail:getX()
 
-	self.r = math.atan2(5, self.lastPosX - self.x) - math.pi / 2
+	self.r = (math.atan2(dt * 0.5, (self.lastPosX - self.x) * dt) - math.pi / 2 + self.lastR) / 2
+	self.lastR = self.r
 end
 
 function Player:draw()
@@ -80,7 +82,13 @@ function Player:switchRails()
 		return findNextBranch(rail.nextRail)
 	end
 
-	local nextBranch = findNextBranch(self.rail)
+	local dist = self.rail.y - self.y
+	local nextBranch = nil
+	if dist < self.h then
+		nextBranch = findNextBranch(self.rail)
+	else
+		nextBranch = findNextBranch(self.rail.nextRail)
+	end
 
 	if nextBranch then
 		nextBranch:switch()

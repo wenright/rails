@@ -36,8 +36,8 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.setColor(255, 255, 255)
-  love.graphics.print(love.timer.getFPS())
+  love.graphics.setColor(0, 255, 0)
+  love.graphics.print(love.timer.getFPS(), 250, 450)
 end
 
 function love.keypressed(key)

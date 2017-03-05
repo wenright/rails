@@ -90,11 +90,11 @@ function Rail:draw()
 
 	-- TODO line thickness
 	love.graphics.push()
-	love.graphics.translate(-Game.player.w / 2, self.y - Rail.length)
+	love.graphics.translate(math.floor(self.x - Game.player.w / 2), math.floor(self.y - Rail.length))
 	love.graphics.setColor(self.color)
 
 	if self.type == 'straight' then
-		love.graphics.rectangle('line', self.x, 0, self.w, self.h, 2)
+		love.graphics.rectangle('line', 0, 0, self.w, self.h, 2)
 	elseif self.type == 'branch' then
 		if self.willTakeCurve then
 			love.graphics.setColor(self.disabledColor)
@@ -102,7 +102,7 @@ function Rail:draw()
 			love.graphics.setColor(self.color)
 		end
 
-		love.graphics.rectangle('line', self.x, 0, self.w, self.h, 2)
+		love.graphics.rectangle('line', 0, 0, self.w, self.h, 2)
 
 		if self.willTakeCurve then
 			love.graphics.setColor(self.color)
@@ -110,11 +110,12 @@ function Rail:draw()
 			love.graphics.setColor(self.disabledColor)
 		end
 
+		love.graphics.translate(-self.x, 0)
 		love.graphics.line(self.points1)
 		love.graphics.line(self.points2)
 	elseif self.type == 'deadend' then
-		love.graphics.rectangle('line', self.x, self.h / 2, self.w, self.h / 2, 2)
-		love.graphics.rectangle('fill', self.x, self.h / 2, self.w, self.h / 2, 2)
+		love.graphics.rectangle('line', 0, self.h / 2, self.w, self.h / 2, 2)
+		love.graphics.rectangle('fill', 0, self.h / 2, self.w, self.h / 2, 2)
 	end
 
 	love.graphics.pop()
@@ -144,12 +145,21 @@ function Rail:addNewRail(x)
 	local branchProbability = 0.4
 	local deadendProbability = 0.6
 
-	if love.math.random() < branchProbability
-			and not Game:isRail(self.x + self.w * 2, self.y)   -- Prevent branches from being built onto other rails
-			and self.type ~= 'branch' then                     -- Don't allow 2 branches in a row (Maybe add this in later after sorting out the bugs)
+	if love.math.random() < branchProbability and self.type ~= 'branch' then
 		-- TODO left and right branches. Make sure branch doesn't go off screen or overlap another track
-		return Game.rails:add(Rail(x or self.x, 'branch'))
-		-- TODO and canHaveDeadend
+
+		local adjacentRail = Game:getRail(self.x + self.w * 2, self.y)
+		if adjacentRail then
+			-- TODO
+			-- local newRail = Game.rails:add(Rail(x or self.x, 'branch'))
+
+			-- newRail.head = false
+			-- adjacentRail.child = newRail
+
+			-- return newRail
+		else
+			return Game.rails:add(Rail(x or self.x, 'branch'))
+		end
 	end
 
 	if love.math.random() < deadendProbability then
