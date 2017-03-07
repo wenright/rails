@@ -116,7 +116,11 @@ function Player:swipeRight()
 end
 
 function Player:swipeLeft()
-
+	if self.rail.type == 'branch' then
+		self.rail:branchLeft()
+	else
+		self.rail.nextRail:branchLeft()
+	end
 end
 
 return Player

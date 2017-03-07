@@ -13,7 +13,7 @@ Rail = require 'scripts.rail'
 Game = require 'scripts.states.game'
 Menu = require 'scripts.states.menu'
 
-DEBUG = false
+DEBUG = true
 
 function love.load()
   io.stdout:setvbuf('no')

@@ -16,7 +16,6 @@ function Game:enter()
   self.timer.tween(60, self, {speed = 1200}, 'linear')
 
   self.camera = Camera(0, love.graphics.getHeight() / 2)
-  self.camera:zoom(1.5)
 
   self.rails = EntitySystem()
 
@@ -127,6 +126,10 @@ end
 function Game:keypressed(key)
   if key == 'p' then
     self.paused = not self.paused
+  elseif key == 'right' then
+    Game.player:swipeRight()
+  elseif key == 'left' then
+    Game.player:swipeLeft()  
   else
     -- Game.player:switchRails()
   end

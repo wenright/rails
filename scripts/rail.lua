@@ -1,12 +1,14 @@
 local Rail = Class {
-	length = 128
+	length = 128,
+	offset = 0
 }
 
 function Rail:init(x, y, t)
 	self.w, self.h = 32, Rail.length
 
 	self.x = x or 0
-	self.y = y or 0
+	-- self.y = y or 0
+	self.y = 0
 
 	self.head = true
 
