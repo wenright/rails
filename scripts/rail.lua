@@ -154,7 +154,7 @@ function Rail:addNewRail(x)
 
 		local adjacentRail = Game:getRail(self.x + self.w * 2, self.y)
 		if adjacentRail then
-			-- TODO
+			-- TODO merging rails
 			-- local newRail = Game.rails:add(Rail(x or self.x, 'branch'))
 
 			-- newRail.head = false

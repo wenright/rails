@@ -42,16 +42,10 @@ function Player:setRail(rail)
 	assert(rail, 'Tried to set nil rail')
 	self.rail = rail
 
-	Game.score = Game.score + 1
-	if Game.score > Game.highscore then
-		Game.highscore = Game.score
-	end
+	Game:incrementScore()
 
 	if self.rail.type == 'deadend' then
-		-- Game Over!
-		print('Game over!')
-		Game.speed = 0
-		Game.over = true
+		Game:gameOver()
 	end
 end
 

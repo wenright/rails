@@ -6,7 +6,7 @@ function Game:enter()
   self.player = Player()
 
     -- TODO load highscore from a save file
-  self.highscore = 0
+  self.highscore = self:readHighscore()
 
   self.score = 0
 
@@ -124,15 +124,56 @@ function Game:mousereleased(x, y)
 end
 
 function Game:keypressed(key)
-  if key == 'p' then
-    self.paused = not self.paused
-  elseif key == 'right' then
-    Game.player:swipeRight()
-  elseif key == 'left' then
-    Game.player:swipeLeft()  
-  else
-    -- Game.player:switchRails()
+  if not Game.over then
+    if key == 'p' then
+      self.paused = not self.paused
+    elseif key == 'right' then
+      Game.player:swipeRight()
+    elseif key == 'left' then
+      Game.player:swipeLeft()  
+    else
+      -- Game.player:switchRails()
+    end
   end
+end
+
+function Game:gameOver()
+  Game:updateHighscore()
+  Game:writeHighscore()
+
+  Game.speed = 0
+  Game.over = true
+end
+
+function Game:updateHighscore()
+  if Game.score > Game.highscore then
+    Game.highscore = Game.score
+  end
+end
+
+function Game:writeHighscore()
+  local success = love.filesystem.write('highscore.txt', self.highscore)
+
+  if success then
+    print('Saved high score successfully')
+  else
+    error('Unable to save high score!')
+  end
+end
+
+function Game:readHighscore()
+  local str = love.filesystem.read('highscore.txt')
+  return tonumber(str) or 0  
+end
+
+function Game:incrementScore()
+  Game.score = Game.score + 1
+  Game:updateHighscore()
+end
+
+function Game:quit()
+  Game:updateHighscore()
+  Game:writeHighscore()
 end
 
 return Game
