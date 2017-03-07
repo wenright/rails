@@ -22,24 +22,15 @@ function Rail:init(x, y, t)
 	elseif self.type == 'branch' then
 		local x, y = self.x, Rail.length
 
-		self.curve1 = love.math.newBezierCurve({
-			x + self.w, y,
-			x + self.w + 8, y - 48,
-			x + self.w + 32, y - 64,
-			x + self.w + 56, y - 80,
-			x + self.w + 64, y - 128
-		})
-
-		self.curve2 = love.math.newBezierCurve({
-			x, y,
-			x + 8, y - 48,
+		self.curve = love.math.newBezierCurve({
+			x +  0, y - 0,
+			x +  8, y - 48,
 			x + 32, y - 64,
 			x + 56, y - 80,
 			x + 64, y - 128
 		})
 
-		self.points1 = self.curve1:render(5)
-		self.points2 = self.curve2:render(5)
+		self.points = self.curve:render(5)
 
 		self.willBranchRight = false
 	elseif self.type == 'deadend' then
@@ -111,8 +102,10 @@ function Rail:draw()
 		end
 
 		love.graphics.translate(-self.x, 0)
-		love.graphics.line(self.points1)
-		love.graphics.line(self.points2)
+		love.graphics.line(self.points)
+
+		love.graphics.translate(self.w, 0)
+		love.graphics.line(self.points)
 	elseif self.type == 'deadend' then
 		love.graphics.rectangle('line', 0, self.h / 2, self.w, self.h / 2, 2)
 		love.graphics.rectangle('fill', 0, self.h / 2, self.w, self.h / 2, 2)
@@ -124,7 +117,7 @@ end
 function Rail:getX()
 	if self.willBranchRight then
 		local t = math.min(math.abs((self.y - Game.player.y) / Rail.length), 1)
-		local x, y = self.curve2:evaluate(t)
+		local x, y = self.curve:evaluate(t)
 		return x
 	else
 		return self.x
