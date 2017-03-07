@@ -42,9 +42,16 @@ function Player:setRail(rail)
 	assert(rail, 'Tried to set nil rail')
 	self.rail = rail
 
+	Game.score = Game.score + 1
+	if Game.score > Game.highscore then
+		Game.highscore = Game.score
+	end
+
 	if self.rail.type == 'deadend' then
 		-- Game Over!
-		error('Game over! You ran into a dead end')
+		print('Game over!')
+		Game.speed = 0
+		Game.over = true
 	end
 end
 
@@ -101,9 +108,7 @@ function Player:switchRails()
 end
 
 function Player:swipeRight()
-	local dist = self.rail.y - self.y
-
-	if dist < self.h then
+	if self.rail.type == 'branch' then
 		self.rail:switch()
 	else
 		self.rail.nextRail:switch()

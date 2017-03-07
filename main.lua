@@ -18,6 +18,8 @@ DEBUG = false
 function love.load()
   io.stdout:setvbuf('no')
 
+  love.graphics.setFont(love.graphics.newFont('font/kenpixel_high.ttf', 48))
+
   if DEBUG then
     print("lovebird started on port 8000")
   end

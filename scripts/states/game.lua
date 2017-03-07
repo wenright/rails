@@ -1,13 +1,19 @@
 local Game = {}
 
-function Game:init()
+function Game:enter()
   self.timer = Timer.new()
 
   self.player = Player()
+
+    -- TODO load highscore from a save file
+  self.highscore = 0
+
+  self.score = 0
+
   love.graphics.setBackgroundColor(Color[5])
 
   self.speed = 300
-  self.timer.tween(120, self, {speed = 1250}, 'linear')
+  self.timer.tween(60, self, {speed = 1200}, 'linear')
 
   self.rails = EntitySystem()
 
@@ -27,18 +33,11 @@ function Game:init()
   self.camera = Camera(0, love.graphics.getHeight() / 2)
   self.camera:zoom(1.5)
 
-  -- TODO camera zooming based on screen size
-  -- self.camera:zoom(love.graphics.getWidth() / 600)
-  self.camera:zoom(1)
-
-  -- TODO load highscore from a save file
-  self.highscore = 0
-
-  self.score = 0
+  self.over = false
 end
 
 function Game:update(dt)
-  if not self.paused then
+  if not self.paused and not Game.over then
     self.timer.update(dt)
 
     self.rails:forEach('update', dt)
@@ -57,8 +56,12 @@ function Game:draw()
   self.camera:detach()
 
   love.graphics.setColor(Color[1])
-  love.graphics.print('HI ' .. self.highscore)
-  love.graphics.print('   ' ..  self.score, 0, 40)
+  love.graphics.print('HI\t' .. self.highscore)
+  love.graphics.print('\t\t' ..  self.score, 0, 40)
+
+  if Game.over then
+    love.graphics.printf('Game Over!', 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), 'center')
+  end
 end
 
 function Game:getRail(x, y)
@@ -83,7 +86,14 @@ end
 
 function Game:mousepressed(x, y, button, isTouch)
   -- Game.player:switchRails()
-  self.mouseStart = {x = x, y = y}
+
+  if Game.over then
+    -- Restart game
+    print('New game')
+    Gamestate.pop()
+  else
+    self.mouseStart = {x = x, y = y}
+  end
 end
 
 function Game:mousemoved(x, y, dx, dy)

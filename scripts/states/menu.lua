@@ -1,9 +1,13 @@
 local Menu = {}
 
+function Menu:resume()
+	Gamestate.push(Game)
+end
+
 function Menu:enter()
   -- For now, just launch the game
   -- TODO start menu
-  Gamestate.switch(Game)
+  Gamestate.push(Game)
 end
 
 function Menu:update(dt)
