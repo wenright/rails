@@ -15,6 +15,9 @@ function Game:enter()
   self.speed = 300
   self.timer.tween(60, self, {speed = 1200}, 'linear')
 
+  self.camera = Camera(0, love.graphics.getHeight() / 2)
+  self.camera:zoom(1.5)
+
   self.rails = EntitySystem()
 
   self.rails:add(Rail())
@@ -29,9 +32,6 @@ function Game:enter()
   end
 
   Game.player:setRail(closestRail)
-
-  self.camera = Camera(0, love.graphics.getHeight() / 2)
-  self.camera:zoom(1.5)
 
   self.over = false
 end
@@ -51,7 +51,10 @@ function Game:draw()
   self.camera:attach()
 
   self.rails:forEach('draw')
-  self.player:draw()
+
+  if not Game.over then
+    self.player:draw()
+  end
 
   self.camera:detach()
 

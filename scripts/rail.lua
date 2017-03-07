@@ -2,11 +2,11 @@ local Rail = Class {
 	length = 128
 }
 
-function Rail:init(x, t)
+function Rail:init(x, y, t)
 	self.w, self.h = 32, Rail.length
 
 	self.x = x or 0
-	self.y = 0
+	self.y = y or 0
 
 	self.head = true
 
@@ -41,7 +41,7 @@ function Rail:init(x, t)
 		self.points1 = self.curve1:render(5)
 		self.points2 = self.curve2:render(5)
 
-		self.willTakeCurve = false
+		self.willBranchRight = false
 	elseif self.type == 'deadend' then
 
 	end
@@ -70,7 +70,7 @@ function Rail:update(dt)
 			-- Game over. But this is handled in the player class
 		else
 			-- TODO decide which rail to put player on for branches
-			if self.type == 'branch' and self.willTakeCurve then
+			if self.type == 'branch' and self.willBranchRight then
 				print('Taking curve')
 				Game.player:setRail(self.nextRailBranch)
 			else
@@ -96,7 +96,7 @@ function Rail:draw()
 	if self.type == 'straight' then
 		love.graphics.rectangle('line', 0, 0, self.w, self.h, 2)
 	elseif self.type == 'branch' then
-		if self.willTakeCurve then
+		if self.willBranchRight then
 			love.graphics.setColor(self.disabledColor)
 		else
 			love.graphics.setColor(self.color)
@@ -104,7 +104,7 @@ function Rail:draw()
 
 		love.graphics.rectangle('line', 0, 0, self.w, self.h, 2)
 
-		if self.willTakeCurve then
+		if self.willBranchRight then
 			love.graphics.setColor(self.color)
 		else
 			love.graphics.setColor(self.disabledColor)
@@ -122,7 +122,7 @@ function Rail:draw()
 end
 
 function Rail:getX()
-	if self.willTakeCurve then
+	if self.willBranchRight then
 		local t = math.min(math.abs((self.y - Game.player.y) / Rail.length), 1)
 		local x, y = self.curve2:evaluate(t)
 		return x
@@ -131,15 +131,22 @@ function Rail:getX()
 	end
 end
 
-function Rail:switch()
+function Rail:branchRight()
 	if self.type == 'branch' then
-		self.willTakeCurve = not self.willTakeCurve
+		self.willBranchRight = true
+	end
+end
+
+-- TODO left branching
+function Rail:branchLeft()
+	if self.type == 'branch' then
+		self.willBranchRight = false
 	end
 end
 
 function Rail:addNewRail(x)
 	if Game.isWarmingUp then
-		return Game.rails:add(Rail(x or self.x, 'straight'))
+		return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'straight'))
 	end
 
 	-- TODO rather than probabilities, do something like 'after random(1 -> 4) rails, spawn deadend'
@@ -160,17 +167,17 @@ function Rail:addNewRail(x)
 
 			-- return newRail
 		else
-			return Game.rails:add(Rail(x or self.x, 'branch'))
+			return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'branch'))
 		end
 	end
 
 	if love.math.random() < deadendProbability then
 		if Game.player:pathCount() > 1 then
-			return Game.rails:add(Rail(x or self.x, 'deadend'))
+			return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'deadend'))
 		end
 	end
 
-	return Game.rails:add(Rail(x or self.x, 'straight'))
+	return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'straight'))
 end
 
 return Rail

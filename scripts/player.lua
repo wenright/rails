@@ -109,9 +109,9 @@ end
 
 function Player:swipeRight()
 	if self.rail.type == 'branch' then
-		self.rail:switch()
+		self.rail:branchRight()
 	else
-		self.rail.nextRail:switch()
+		self.rail.nextRail:branchRight()
 	end
 end
 
