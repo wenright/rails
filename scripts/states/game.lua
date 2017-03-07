@@ -82,14 +82,40 @@ function Game:getClosestRail(x, y)
 end
 
 function Game:mousepressed(x, y, button, isTouch)
-  Game.player:switchRails()
+  -- Game.player:switchRails()
+  self.mouseStart = {x = x, y = y}
+end
+
+function Game:mousemoved(x, y, dx, dy)
+  if self.mouseStart then
+    local dist = math.sqrt((x - self.mouseStart.x)^2 + (y - self.mouseStart.y)^2)
+    local sign = x - self.mouseStart.x
+
+    local gate = 20
+
+    if dist >= gate then
+      if sign > 0 then
+        print('Swipe right')
+        Game.player:swipeRight()
+      else
+        print('Swipe left')
+        Game.player:swipeLeft()
+      end
+
+      self.mouseStart = nil
+    end
+  end
+end
+
+function Game:mousereleased(x, y)
+  self.mouseStart = nil
 end
 
 function Game:keypressed(key)
   if key == 'p' then
     self.paused = not self.paused
   else
-    Game.player:switchRails()
+    -- Game.player:switchRails()
   end
 end
 

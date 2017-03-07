@@ -90,7 +90,7 @@ function Rail:draw()
 
 	-- TODO line thickness
 	love.graphics.push()
-	love.graphics.translate(math.floor(self.x - Game.player.w / 2), math.floor(self.y - Rail.length))
+	love.graphics.translate(self.x - Game.player.w / 2, self.y - Rail.length)
 	love.graphics.setColor(self.color)
 
 	if self.type == 'straight' then
@@ -132,7 +132,9 @@ function Rail:getX()
 end
 
 function Rail:switch()
-	self.willTakeCurve = not self.willTakeCurve
+	if self.type == 'branch' then
+		self.willTakeCurve = not self.willTakeCurve
+	end
 end
 
 function Rail:addNewRail(x)

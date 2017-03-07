@@ -17,7 +17,12 @@ function Player:update(dt)
 	self.lastPosX = self.x
 	self.x = self.rail:getX()
 
-	self.r = (math.atan2(dt * 0.5, (self.lastPosX - self.x) * dt) - math.pi / 2 + self.lastR) / 2
+	-- self.r = (math.atan2(0.05, (self.lastPosX - self.x) * dt) - math.pi / 2 + self.lastR) / 2
+	-- self.lastR = self.r
+	local vx = self.lastPosX - self.x
+	local rotationOffset = -math.pi / 2
+
+	self.r = (math.atan2(Game.speed * dt, vx) + rotationOffset + self.lastR) / 2
 	self.lastR = self.r
 end
 
@@ -86,8 +91,6 @@ function Player:switchRails()
 	local nextBranch = nil
 	if dist < self.h then
 		nextBranch = findNextBranch(self.rail)
-	else
-		nextBranch = findNextBranch(self.rail.nextRail)
 	end
 
 	if nextBranch then
@@ -95,6 +98,20 @@ function Player:switchRails()
 	else
 		print('No branch rails ahead')
 	end
+end
+
+function Player:swipeRight()
+	local dist = self.rail.y - self.y
+
+	if dist < self.h then
+		self.rail:switch()
+	else
+		self.rail.nextRail:switch()
+	end
+end
+
+function Player:swipeLeft()
+
 end
 
 return Player
