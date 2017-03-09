@@ -144,8 +144,9 @@ function Rail:draw()
 		love.graphics.translate(self.w, 0)
 		love.graphics.line(self.points)
 	elseif self.type == 'deadend' then
-		love.graphics.rectangle('line', 0, self.h / 2, self.w, self.h / 2, 2)
-		love.graphics.rectangle('fill', 0, self.h / 2, self.w, self.h / 2, 2)
+		love.graphics.setColor(Color[1])
+		love.graphics.rectangle('line', 0, self.h * 3 / 4, self.w, self.h / 4, 2)
+		love.graphics.rectangle('fill', 0, self.h * 3 / 4, self.w, self.h / 4, 2)
 	end
 
 	love.graphics.pop()

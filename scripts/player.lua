@@ -1,7 +1,7 @@
 local Player = Class {}
 
 function Player:init()
-	self.w, self.h = 32, 48
+	self.w, self.h = 48, 64
 
 	self.x = 0
 	self.y = (love.graphics.getHeight() * 3) / 4
@@ -30,8 +30,8 @@ function Player:draw()
 	love.graphics.rotate(self.r)
 
 	love.graphics.setColor(Color[2])
-	love.graphics.rectangle('line', 0, -self.h / 2, self.w, self.h, 2)
-	love.graphics.rectangle('fill', 0, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('line', -8, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('fill', -8, -self.h / 2, self.w, self.h, 2)
 
 	love.graphics.pop()
 end

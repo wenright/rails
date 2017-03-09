@@ -1,7 +1,8 @@
 local Game = {}
 
 function Game:enter()
-  love.math.setRandomSeed(1489096482)
+  -- TODO only set the random seed for debugging
+  -- love.math.setRandomSeed(1489100801)
   print(love.math.getRandomSeed())
 
   self.timer = Timer.new()
@@ -15,9 +16,10 @@ function Game:enter()
   love.graphics.setBackgroundColor(Color[5])
 
   self.speed = 300
-  self.timer.tween(60, self, {speed = 1200}, 'linear')
+  self.timer.tween(120, self, {speed = 1100}, 'linear')
 
   self.camera = Camera(0, love.graphics.getHeight() / 2)
+  self.camera:zoom(1.5)
 
   self.rails = EntitySystem()
 
