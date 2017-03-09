@@ -1,11 +1,12 @@
 local Game = {}
 
 function Game:enter()
+  love.math.setRandomSeed(12300)
+
   self.timer = Timer.new()
 
   self.player = Player()
 
-    -- TODO load highscore from a save file
   self.highscore = self:readHighscore()
 
   self.score = 0
@@ -68,8 +69,12 @@ end
 
 function Game:getRail(x, y)
   for k, rail in pairs(self.rails.pool) do
-    if rail.x == x and rail.y <= y and rail.y + Rail.length >= y then
-      return rail
+    if rail.y <= y and rail.y + Rail.length >= y then
+      if rail:isBranch() and (rail.x == x or rail.x + rail.w == x) then
+        return rail
+      elseif rail.x == x then
+        return rail
+      end
     end
   end
 

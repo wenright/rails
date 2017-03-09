@@ -9,7 +9,6 @@ function Player:init()
 	self.lastPosX = self.x
 
 	self.r = 0
-	self.lastR = 0
 end
 
 function Player:update(dt)
@@ -22,18 +21,17 @@ function Player:update(dt)
 	local vx = self.lastPosX - self.x
 	local rotationOffset = -math.pi / 2
 
-	self.r = (math.atan2(Game.speed * dt, vx) + rotationOffset + self.lastR) / 2
-	self.lastR = self.r
+	self.r = math.atan2(Game.speed * dt, vx) + rotationOffset
 end
 
 function Player:draw()
 	love.graphics.push()
-	love.graphics.translate(self.x, self.y)
+	love.graphics.translate(self.x - self.w / 2, self.y)
 	love.graphics.rotate(self.r)
 
 	love.graphics.setColor(Color[2])
-	love.graphics.rectangle('line', -self.w / 2, -self.h / 2, self.w, self.h, 2)
-	love.graphics.rectangle('fill', -self.w / 2, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('line', 0, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('fill', 0, -self.h / 2, self.w, self.h, 2)
 
 	love.graphics.pop()
 end
@@ -92,6 +90,8 @@ function Player:switchRails()
 	local nextBranch = nil
 	if dist < self.h then
 		nextBranch = findNextBranch(self.rail)
+	else
+		nextBranch = findNextBranch(self.rail.nextRail)
 	end
 
 	if nextBranch then

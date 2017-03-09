@@ -172,7 +172,7 @@ function Rail:branchRight()
 end
 
 -- TODO left branching
-function Rail:branchLeft()
+function Rail:branchLeft()	
 	if self.type == 'branchRight' then
 		self.willBranchRight = false
 	elseif self.type == 'branchLeft' then
@@ -220,13 +220,19 @@ function Rail:addNewRail(x)
 		end
 	end
 
-	if love.math.random() < deadendProbability then
-		if Game.player:pathCount() > 1 then
+	if love.math.random() < deadendProbability and not Game.player.rail.nextRail:isBranch() then
+		local pathCount = Game.player:pathCount()
+		local isBranch = self.type == 'branchRight' or self.type == 'branchLeft'
+		if (isBranch and pathCount > 2) or (not isBranch and pathCount > 1) then
 			return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'deadend'))
 		end
 	end
 
 	return Game.rails:add(Rail(x or self.x, self.y - Rail.length, 'straight'))
+end
+
+function Rail:isBranch()
+	return self.type == 'branchRight' or self.type == 'branchLeft'
 end
 
 return Rail
