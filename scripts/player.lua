@@ -64,7 +64,7 @@ function Player:pathCount()
 			end
 		end
 
-		if rail.type == 'branch' then
+		if rail.type == 'branchRight' or rail.type == 'branchLeft' then
 			return checkPath(rail.nextRailBranch) + checkPath(rail.nextRail)
 		else
 			return checkPath(rail.nextRail)
@@ -81,7 +81,7 @@ function Player:switchRails()
 			return nil
 		end
 
-		if rail.type == 'branch' then
+		if rail.type == 'branchRight' or rail.type == 'branchLeft' then
 			return rail
 		end
 
@@ -102,7 +102,7 @@ function Player:switchRails()
 end
 
 function Player:swipeRight()
-	if self.rail.type == 'branch' then
+	if self.rail.type == 'branchRight' or self.rail.type == 'branchLeft' then
 		self.rail:branchRight()
 	else
 		self.rail.nextRail:branchRight()
@@ -110,7 +110,7 @@ function Player:swipeRight()
 end
 
 function Player:swipeLeft()
-	if self.rail.type == 'branch' then
+	if self.rail.type == 'branchRight' or self.rail.type == 'branchLeft' then
 		self.rail:branchLeft()
 	else
 		self.rail.nextRail:branchLeft()
