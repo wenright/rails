@@ -1,7 +1,8 @@
 local Game = {}
 
 function Game:enter()
-  love.math.setRandomSeed(12300)
+  love.math.setRandomSeed(1489096482)
+  print(love.math.getRandomSeed())
 
   self.timer = Timer.new()
 
@@ -132,9 +133,9 @@ function Game:keypressed(key)
   if not Game.over then
     if key == 'p' then
       self.paused = not self.paused
-    elseif key == 'right' then
+    elseif key == 'right' or key == 'd' then
       Game.player:swipeRight()
-    elseif key == 'left' then
+    elseif key == 'left' or key == 'a' then
       Game.player:swipeLeft()  
     else
       -- Game.player:switchRails()

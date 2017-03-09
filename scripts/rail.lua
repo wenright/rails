@@ -7,8 +7,7 @@ function Rail:init(x, y, t)
 	self.w, self.h = 32, Rail.length
 
 	self.x = x or 0
-	-- self.y = y or 0
-	self.y = 0
+	self.y = y or 0
 
 	self.head = true
 
@@ -81,7 +80,6 @@ function Rail:update(dt)
 		else
 			-- TODO decide which rail to put player on for branches
 			if (self.type == 'branchRight' and self.willBranchRight) or (self.type == 'branchLeft' and self.willBranchLeft) then
-				print('Taking curve')
 				Game.player:setRail(self.nextRailBranch)
 			else
 				Game.player:setRail(self.nextRail)
