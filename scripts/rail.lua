@@ -1,12 +1,12 @@
 local Rail = Class {
-	length = 128,
-	offset = 0
+	length = 128
 }
 
 function Rail:init(x, y, t)
 	self.w, self.h = 32, Rail.length
 
 	self.x = x or 0
+
 	self.y = y or 0
 
 	self.head = true
@@ -54,8 +54,6 @@ function Rail:init(x, y, t)
 end
 
 function Rail:update(dt)
-	self.y = self.y + dt * Game.speed
-
 	if self.head and self.y > self.length then
 		-- TODO rail choice shouldn't be totally random, and make sure that there is always a path (not all deadends)
 		if self.type == 'straight' then
@@ -91,6 +89,9 @@ function Rail:update(dt)
 		Game.isWarmingUp = false
 		Game.rails:remove(self)
 	end
+
+	self.y = self.y + dt * Game.speed
+	
 end
 
 function Rail:draw()

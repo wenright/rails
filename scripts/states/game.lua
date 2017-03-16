@@ -2,7 +2,7 @@ local Game = {}
 
 function Game:enter()
   -- TODO only set the random seed for debugging
-  -- love.math.setRandomSeed(1489100801)
+  love.math.setRandomSeed(1489351354)
   print(love.math.getRandomSeed())
 
   self.timer = Timer.new()
@@ -19,7 +19,9 @@ function Game:enter()
   self.timer.tween(120, self, {speed = 1100}, 'linear')
 
   self.camera = Camera(0, love.graphics.getHeight() / 2)
-  self.camera:zoom(1.5)
+
+  -- TODO we can't zoom since this messes with the levels ability to be beaten, but need a way to make the game always same size(ish) on all devices
+  -- self.camera:zoom(1)
 
   self.rails = EntitySystem()
 
@@ -55,9 +57,7 @@ function Game:draw()
 
   self.rails:forEach('draw')
 
-  if not Game.over then
-    self.player:draw()
-  end
+  self.player:draw()
 
   self.camera:detach()
 
@@ -66,7 +66,7 @@ function Game:draw()
   love.graphics.print('\t\t' ..  self.score, 0, 40)
 
   if Game.over then
-    love.graphics.printf('Game Over!', 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), 'center')
+    love.graphics.printf('Game Over!\nTap to retry', 0, love.graphics.getHeight() / 2, love.graphics.getWidth(), 'center')
   end
 end
 

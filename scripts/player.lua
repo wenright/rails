@@ -1,7 +1,7 @@
 local Player = Class {}
 
 function Player:init()
-	self.w, self.h = 48, 64
+	self.w, self.h = 32, 48
 
 	self.x = 0
 	self.y = (love.graphics.getHeight() * 3) / 4
@@ -21,7 +21,11 @@ function Player:update(dt)
 	local vx = self.lastPosX - self.x
 	local rotationOffset = -math.pi / 2
 
-	self.r = math.atan2(Game.speed * dt, vx) + rotationOffset
+	if Game.over then
+		self.r = 0
+	else
+		self.r = math.atan2(Game.speed * dt, vx) + rotationOffset
+	end
 end
 
 function Player:draw()
@@ -30,8 +34,8 @@ function Player:draw()
 	love.graphics.rotate(self.r)
 
 	love.graphics.setColor(Color[2])
-	love.graphics.rectangle('line', -8, -self.h / 2, self.w, self.h, 2)
-	love.graphics.rectangle('fill', -8, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('line', 0, -self.h / 2, self.w, self.h, 2)
+	love.graphics.rectangle('fill', 0, -self.h / 2, self.w, self.h, 2)
 
 	love.graphics.pop()
 end
