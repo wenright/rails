@@ -10,8 +10,15 @@ function Game:enter()
   self.player = Player()
 
   self.highscore = self:readHighscore()
+  self.hasBrokenHighscore = false
+  
+  -- Don't flash score if they are playing for the first time
+  if self.highscore == 0 then
+    self.hasBrokenHighscore = true
+  end
 
   self.score = 0
+  self.scoreColor = Color[1]
 
   love.graphics.setBackgroundColor(Color[5])
 
@@ -61,7 +68,7 @@ function Game:draw()
 
   self.camera:detach()
 
-  love.graphics.setColor(Color[1])
+  love.graphics.setColor(self.scoreColor)
   love.graphics.print('HI\t' .. self.highscore)
   love.graphics.print('\t\t' ..  self.score, 0, 40)
 
@@ -75,7 +82,7 @@ function Game:getRail(x, y)
     if rail.y <= y and rail.y + Rail.length >= y then
       if rail:isBranch() and (rail.x == x or rail.x + rail.w == x) then
         return rail
-      elseif rail.x == x then
+      elseif math.abs(rail.x - x) <= 10 then
         return rail
       end
     end
@@ -154,8 +161,21 @@ function Game:gameOver()
 end
 
 function Game:updateHighscore()
-  if Game.score > Game.highscore then
-    Game.highscore = Game.score
+  if self.score > self.highscore then
+    self.highscore = self.score
+
+    if not self.hasBrokenHighscore then
+      self.hasBrokenHighscore = true
+      local blinkTime = 0.5
+
+      self.timer.every(blinkTime, function()
+        self.scoreColor = Color[5]
+
+        self.timer.after(blinkTime / 2, function()
+          self.scoreColor = Color[1]
+        end)
+      end, 3)
+    end
   end
 end
 

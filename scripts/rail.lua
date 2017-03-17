@@ -91,7 +91,6 @@ function Rail:update(dt)
 	end
 
 	self.y = self.y + dt * Game.speed
-	
 end
 
 function Rail:draw()
@@ -187,8 +186,8 @@ function Rail:addNewRail(x)
 
 	-- TODO rather than probabilities, do something like 'after random(1 -> 4) rails, spawn deadend'
 	-- TODO there is a possibility where it keeps branching right and not spawning any dead ends, causing there to be no branches on the players rail
-	local branchProbability = 0.4
-	local deadendProbability = 0.6
+	local branchProbability = 0.5
+	local deadendProbability = 0.7
 
 	if love.math.random() < branchProbability and self.type ~= 'branchRight' and self.type ~= 'branchLeft' then
 		if love.math.random() < 0.5 then
